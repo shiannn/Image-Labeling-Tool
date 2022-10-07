@@ -7,9 +7,18 @@ using namespace std;
 
 class MouseCapture {
     public:
-        vector<pair<int,int>> pvec;
-        Mat cur_img;
+        vector<vector<pair<int,int>>> pvecs;
+        vector<Mat> cur_imgs;
+        vector<String> img_paths;
+        int cur_idx;
+        MouseCapture(vector<String> img_paths):img_paths(img_paths){
+            int n_imgs = img_paths.size();
+            cur_imgs.resize(n_imgs);
+            pvecs.resize(n_imgs);
+            cur_idx = 0;
+        }
         void draw_points(Mat img);
+        void write2csv();
         static void mouse_callback (int, int, int, int, void*);
 };
 
@@ -17,17 +26,18 @@ void MouseCapture::mouse_callback(int  event, int  x, int  y, int  flag, void *p
 {
     Mat temp_img;
     MouseCapture* mcap_ptr = (MouseCapture*)param;
-    mcap_ptr->cur_img.copyTo(temp_img);
+    int cur_idx = mcap_ptr->cur_idx;
+    mcap_ptr->cur_imgs[cur_idx].copyTo(temp_img);
     if (event == EVENT_LBUTTONUP) {
         //cout << "(" << x << ", " << y << ")" << endl;
         pair<int,int> temp(x,y);
-        mcap_ptr->pvec.push_back(temp);
+        mcap_ptr->pvecs[cur_idx].push_back(temp);
         mcap_ptr->draw_points(temp_img);
         imshow("Display Image", temp_img);
     }
     else if (event == EVENT_RBUTTONUP){
-        if (mcap_ptr->pvec.size()>0){
-            mcap_ptr->pvec.pop_back();
+        if (mcap_ptr->pvecs[cur_idx].size()>0){
+            mcap_ptr->pvecs[cur_idx].pop_back();
             mcap_ptr->draw_points(temp_img);
             imshow("Display Image", temp_img);
         }
@@ -35,6 +45,7 @@ void MouseCapture::mouse_callback(int  event, int  x, int  y, int  flag, void *p
 }
 
 void MouseCapture::draw_points(Mat img){
+    vector<pair<int,int>> pvec = pvecs[cur_idx];
     for (int i=0; i<pvec.size() ; i++){
         //cout << mcap_ptr->pvec.back().first << " " << mcap_ptr->pvec.back().second << endl;
         int x = pvec[i].first;
@@ -50,16 +61,16 @@ void MouseCapture::draw_points(Mat img){
     }
 }
 
-void write2csv(vector<MouseCapture> mcaps, vector<String> image_paths){
+void MouseCapture::write2csv(){
     ofstream output_csv;
     output_csv.open("label.csv");
     output_csv << "header";
-    for (int i=0;i<mcaps.size();i++){
-        output_csv << image_paths[i];
-        int total_pts = mcaps[i].pvec.size();
+    for (int i=0;i<img_paths.size();i++){
+        output_csv << img_paths[i];
+        int total_pts = pvecs[i].size();
         if(total_pts % 2 != 0) total_pts -= 1;
         for (int j=0;j<total_pts;j++){
-            pair<int,int> pt = mcaps[i].pvec[j];
+            pair<int,int> pt = pvecs[i][j];
             int x = pt.first;
             int y = pt.second;
             output_csv << "," << x << "," << y;
@@ -79,10 +90,9 @@ int main(int argc, char** argv )
     }
     vector<String> image_paths;
     glob(argv[1], image_paths, false);
-    vector<MouseCapture> mcaps(image_paths.size());
-    //cout << image_paths[0] << image_paths[1] << endl;
-    int i = 0;
+    MouseCapture mcap(image_paths);
     while(true){
+        int i = mcap.cur_idx;
         Mat image;
         //image = imread( argv[1], 1 );
         image = imread( image_paths[i], 1 );
@@ -91,22 +101,22 @@ int main(int argc, char** argv )
             printf("No image data \n");
             return -1;
         }
-        image.copyTo(mcaps[i].cur_img);
-        mcaps[i].draw_points(image);
+        image.copyTo(mcap.cur_imgs[i]);
+        mcap.draw_points(image);
         namedWindow("Display Image", WINDOW_AUTOSIZE );
-        setMouseCallback("Display Image", mcaps[i].mouse_callback, &mcaps[i]);
+        setMouseCallback("Display Image", mcap.mouse_callback, &mcap);
 
         imshow("Display Image", image);
         int key = waitKey(0);
         if (char(key) == 'q'){
-            write2csv(mcaps, image_paths);
+            mcap.write2csv();
             break;
         }
         else if (char(key) == 'a'){
-            i = (i-1)%image_paths.size();
+            mcap.cur_idx = (mcap.cur_idx-1)%image_paths.size();
         }
         else if (char(key) == 'd'){
-            i = (i+1)%image_paths.size();
+            mcap.cur_idx = (mcap.cur_idx+1)%image_paths.size();
         }
     }
     return 0;
