@@ -8,7 +8,6 @@ class MouseCapture {
     vector<pair<int,int>> pvec;
     public:
         Mat cur_img;
-        MouseCapture(Mat img): cur_img(img){}
         void draw_points(Mat img);
         static void mouse_callback (int, int, int, int, void*);
 };
@@ -60,6 +59,7 @@ int main(int argc, char** argv )
     }
     vector<String> image_paths;
     glob(argv[1], image_paths, false);
+    vector<MouseCapture> mcaps(image_paths.size());
     //cout << image_paths[0] << image_paths[1] << endl;
     int i = 0;
     while(true){
@@ -71,9 +71,10 @@ int main(int argc, char** argv )
             printf("No image data \n");
             return -1;
         }
-        MouseCapture mcap(image);
+        image.copyTo(mcaps[i].cur_img);
+        mcaps[i].draw_points(image);
         namedWindow("Display Image", WINDOW_AUTOSIZE );
-        setMouseCallback("Display Image", mcap.mouse_callback, &mcap);
+        setMouseCallback("Display Image", mcaps[i].mouse_callback, &mcaps[i]);
 
         imshow("Display Image", image);
         int key = waitKey(0);

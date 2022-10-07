@@ -6,7 +6,7 @@
         # In the project directory
         mkdir build/
         cd build/
-        cmake -DOpenCV_DIR=<OpenCV Folder Containing OpenCVConfig.cmake> ../
+        cmake -DOpenCV_DIR="<Absolute path to OpenCV folder containing OpenCVConfig.cmake>" ../
         ```
     - Build
         ```bash
