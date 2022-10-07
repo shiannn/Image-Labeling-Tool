@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
 #include <stack>
+#include <fstream>
 using namespace cv;
 using namespace std;
 
 class MouseCapture {
-    vector<pair<int,int>> pvec;
     public:
+        vector<pair<int,int>> pvec;
         Mat cur_img;
         void draw_points(Mat img);
         static void mouse_callback (int, int, int, int, void*);
@@ -49,6 +50,25 @@ void MouseCapture::draw_points(Mat img){
     }
 }
 
+void write2csv(vector<MouseCapture> mcaps, vector<String> image_paths){
+    ofstream output_csv;
+    output_csv.open("label.csv");
+    output_csv << "header";
+    for (int i=0;i<mcaps.size();i++){
+        output_csv << image_paths[i];
+        int total_pts = mcaps[i].pvec.size();
+        if(total_pts % 2 != 0) total_pts -= 1;
+        for (int j=0;j<total_pts;j++){
+            pair<int,int> pt = mcaps[i].pvec[j];
+            int x = pt.first;
+            int y = pt.second;
+            output_csv << "," << x << "," << y;
+        }
+        output_csv << endl;
+    }
+    return;
+}
+
 int main(int argc, char** argv )
 {   
     cout << "OpenCV version : " << CV_VERSION << endl;
@@ -79,6 +99,7 @@ int main(int argc, char** argv )
         imshow("Display Image", image);
         int key = waitKey(0);
         if (char(key) == 'q'){
+            write2csv(mcaps, image_paths);
             break;
         }
         else if (char(key) == 'a'){
