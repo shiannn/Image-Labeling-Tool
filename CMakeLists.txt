@@ -12,7 +12,8 @@ find_package(
     NO_DEFAULT_PATH
 )
 add_subdirectory(BBox_Annotator)
+add_subdirectory(Seg_Annotator)
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 add_executable( DisplayImage DisplayImage.cpp )
-target_link_libraries( DisplayImage ${OpenCV_LIBS} bbox)
+target_link_libraries( DisplayImage ${OpenCV_LIBS} bbox seg )
