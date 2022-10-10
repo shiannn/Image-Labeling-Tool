@@ -1,12 +1,13 @@
 ### A Simple Image Labeling Tool
 1. Installation
     - Install Opencv
+    - Add the **Absolute path** to OpenCV folder containing **OpenCVConfig.cmake** to **config_vars.txt**
     - Cmake
         ```bash
         # In the project directory
         mkdir build/
         cd build/
-        cmake -DOpenCV_DIR="<Absolute path to OpenCV folder containing OpenCVConfig.cmake>" ../
+        cmake ../
         ```
     - Build
         ```bash
