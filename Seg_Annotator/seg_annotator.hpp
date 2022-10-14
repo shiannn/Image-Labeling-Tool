@@ -6,7 +6,7 @@ using namespace std;
 class SegAnnotator{
     public:
         Mat temp_img;
-        vector<vector<vector<Point> > > deltas;
+        vector<vector<Mat> > deltas;
         vector<Mat> cur_imgs;
         vector<Mat> pre_imgs;
         vector<String> img_paths;

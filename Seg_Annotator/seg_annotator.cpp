@@ -39,36 +39,41 @@ void SegAnnotator::seg_callback(int  event, int  x, int  y, int  flag, void *par
     }
     else if(event == EVENT_LBUTTONUP){
         segA_ptr->drawing = false;
-        vector<Mat> channels;
-        split(segA_ptr->temp_img-segA_ptr->pre_imgs[cur_idx], channels);
+        //vector<Mat> channels;
+        //split(segA_ptr->temp_img-segA_ptr->pre_imgs[cur_idx], channels);
         //cout << channels[0].size() << endl;
-        vector<Point> delta;
-        findNonZero(channels[0]|channels[1]|channels[2], delta);
-        segA_ptr->deltas[cur_idx].push_back(delta);
+        //vector<Point> delta;
+        //findNonZero(channels[0]|channels[1]|channels[2], delta);
+        segA_ptr->deltas[cur_idx].push_back(segA_ptr->temp_img.clone());
         // for (auto p:delta){
         //     cout << p << endl;
         // }
-        segA_ptr->temp_img.copyTo(segA_ptr->cur_imgs[cur_idx]);
+        //segA_ptr->temp_img.copyTo(segA_ptr->cur_imgs[cur_idx]);
     }
     else if(event == EVENT_RBUTTONUP){
         if (segA_ptr->deltas[cur_idx].size()>0){
             segA_ptr->deltas[cur_idx].pop_back();
             //cout << segA_ptr->deltas[cur_idx].size() << endl;
-            segA_ptr->draw_mask();
+            //segA_ptr->draw_mask();
+            if (segA_ptr->deltas[cur_idx].size() > 0){
+                segA_ptr->deltas[cur_idx].back().copyTo(segA_ptr->temp_img);
+            }else{
+                segA_ptr->pre_imgs[cur_idx].copyTo(segA_ptr->temp_img);
+            }
             imshow("Display Image", segA_ptr->temp_img);
         }
     }
     return;
 }
 
-void SegAnnotator::draw_mask(){
-    // initialize temp_img
-    pre_imgs[cur_idx].copyTo(temp_img);
-    for (int i=0; i<deltas[cur_idx].size();i++){
-        for(int j=0; j<deltas[cur_idx][i].size(); j++){
-            // int x = deltas[cur_idx][i][j].x;
-            // int y = deltas[cur_idx][i][j].y;
-            temp_img.at<Vec3b>(deltas[cur_idx][i][j]) = (0,0,255);
-        }
-    }
-}
+// void SegAnnotator::draw_mask(){
+//     // initialize temp_img
+//     pre_imgs[cur_idx].copyTo(temp_img);
+//     for (int i=0; i<deltas[cur_idx].size();i++){
+//         for(int j=0; j<deltas[cur_idx][i].size(); j++){
+//             // int x = deltas[cur_idx][i][j].x;
+//             // int y = deltas[cur_idx][i][j].y;
+//             temp_img.at<Vec3b>(deltas[cur_idx][i][j]) = (0,0,255);
+//         }
+//     }
+// }
