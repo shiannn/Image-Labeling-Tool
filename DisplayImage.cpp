@@ -27,7 +27,9 @@ int main(int argc, char** argv ){
             printf("No image data \n");
             return -1;
         }
+        image.copyTo(seg_annotator.temp_img);
         image.copyTo(seg_annotator.cur_imgs[i]);
+        image.copyTo(seg_annotator.pre_imgs[i]);
         // TODO: need to draw the mask results here
         namedWindow("Display Image", WINDOW_AUTOSIZE );
         setMouseCallback("Display Image", seg_annotator.seg_callback, &seg_annotator);
