@@ -5,6 +5,8 @@ using namespace std;
 
 class SegAnnotator{
     public:
+        Mat total_mask;
+        Mat temp_mask;
         Mat temp_img;
         vector<vector<Mat> > deltas;
         vector<Mat> cur_imgs;

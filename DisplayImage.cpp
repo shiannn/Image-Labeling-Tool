@@ -27,6 +27,8 @@ int main(int argc, char** argv ){
             printf("No image data \n");
             return -1;
         }
+        seg_annotator.total_mask = Mat(image.size(), CV_8UC1, Scalar(0));
+        seg_annotator.temp_mask = Mat(image.size(), CV_8UC1, Scalar(0));
         image.copyTo(seg_annotator.temp_img);
         image.copyTo(seg_annotator.cur_imgs[i]);
         image.copyTo(seg_annotator.pre_imgs[i]);
