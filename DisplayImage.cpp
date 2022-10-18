@@ -30,8 +30,8 @@ int main(int argc, char** argv ){
         seg_annotator.total_mask = Mat(image.size(), CV_8UC1, Scalar(0));
         seg_annotator.temp_mask = Mat(image.size(), CV_8UC1, Scalar(0));
         image.copyTo(seg_annotator.temp_img);
-        image.copyTo(seg_annotator.cur_imgs[i]);
-        image.copyTo(seg_annotator.pre_imgs[i]);
+        image.copyTo(seg_annotator.cur_img);
+        seg_annotator.deltas[i] = vector<SparseMat>();
         // TODO: need to draw the mask results here
         namedWindow("Display Image", WINDOW_AUTOSIZE );
         setMouseCallback("Display Image", seg_annotator.seg_callback, &seg_annotator);
