@@ -8,7 +8,7 @@ class SegAnnotator{
         Mat total_mask;
         Mat temp_mask;
         Mat temp_img;
-        vector<vector<Mat> > deltas;
+        vector<vector<SparseMat> > deltas;
         vector<Mat> cur_imgs;
         vector<Mat> pre_imgs;
         vector<String> img_paths;
