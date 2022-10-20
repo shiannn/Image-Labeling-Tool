@@ -1,19 +1,24 @@
 #include <stdio.h>
+#include <string>
 #include <opencv2/opencv.hpp>
 #include <stack>
 #include <fstream>
+#include <filesystem>
 #include "BBox_Annotator/bbox_annotator.hpp"
 #include "Seg_Annotator/seg_annotator.hpp"
 
 using namespace cv;
 using namespace std;
+namespace fs = filesystem;
 
 int main(int argc, char** argv ){
-    if ( argc != 2 )
+    if ( argc != 3 )
     {
-        printf("usage: DisplayImage.out <Image_Path>\n");
+        printf("usage: DisplayImage.out <Image_Folder> <Masks_Output_Folder>\n");
         return -1;
     }
+    fs::path mask_output_dir = fs::path(argv[2]);
+    fs::create_directory(mask_output_dir);
     vector<String> image_paths;
     glob(argv[1], image_paths, false);
     SegAnnotator seg_annotator(image_paths);
@@ -27,10 +32,19 @@ int main(int argc, char** argv ){
             printf("No image data \n");
             return -1;
         }
-        seg_annotator.total_mask = Mat(image.size(), CV_8UC1, Scalar(0));
-        seg_annotator.temp_mask = Mat(image.size(), CV_8UC1, Scalar(0));
+        fs::path output_name = fs::path(image_paths[i]).stem();
+        output_name += "_mask.png";
+        fs::path output_path = mask_output_dir / output_name;
         image.copyTo(seg_annotator.temp_img);
         image.copyTo(seg_annotator.cur_img);
+        if(fs::exists(output_path)){
+            seg_annotator.total_mask = (imread(output_path, IMREAD_GRAYSCALE)>0);
+            seg_annotator.temp_img.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
+            image.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
+        }else{
+            seg_annotator.total_mask = Mat(image.size(), CV_8UC1, Scalar(0));
+        }
+        seg_annotator.temp_mask = Mat(image.size(), CV_8UC1, Scalar(0));
         seg_annotator.deltas[i] = vector<SparseMat>();
         // TODO: need to draw the mask results here
         namedWindow("Display Image", WINDOW_AUTOSIZE );
@@ -42,11 +56,13 @@ int main(int argc, char** argv ){
             break;
         }
         else if (char(key) == 'a'){
-            seg_annotator.cur_idx = (seg_annotator.cur_idx-1)%image_paths.size();
+            seg_annotator.cur_idx = (seg_annotator.cur_idx-1+image_paths.size())%image_paths.size();
         }
         else if (char(key) == 'd'){
             seg_annotator.cur_idx = (seg_annotator.cur_idx+1)%image_paths.size();
         }
+        
+        imwrite(output_path, seg_annotator.total_mask*100);
     }
     return 0;
 }

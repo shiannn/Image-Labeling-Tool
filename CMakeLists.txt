@@ -16,4 +16,6 @@ add_subdirectory(Seg_Annotator)
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 add_executable( DisplayImage DisplayImage.cpp )
+
+set_property(TARGET DisplayImage PROPERTY CXX_STANDARD 17)
 target_link_libraries( DisplayImage ${OpenCV_LIBS} bbox seg )

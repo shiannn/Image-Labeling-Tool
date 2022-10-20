@@ -1,3 +1,7 @@
 build/
 config_vars.txt
 testing/
+
+opencv.zip
+opencv-4.x/
+opencv_build
