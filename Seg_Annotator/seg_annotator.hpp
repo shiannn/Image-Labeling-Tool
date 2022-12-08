@@ -12,6 +12,7 @@ class SegAnnotator{
         vector<vector<SparseMat> > deltas;
         vector<String> img_paths;
         int cur_idx;
+        int color_idx;
         bool drawing;
         SegAnnotator(vector<String> img_paths);
         static void seg_callback(int  event, int  x, int  y, int  flag, void *param);

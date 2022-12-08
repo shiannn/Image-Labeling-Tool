@@ -38,9 +38,12 @@ int main(int argc, char** argv ){
         image.copyTo(seg_annotator.temp_img);
         image.copyTo(seg_annotator.cur_img);
         if(fs::exists(output_path)){
-            seg_annotator.total_mask = (imread(output_path, IMREAD_GRAYSCALE)>0);
-            seg_annotator.temp_img.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
-            image.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
+            seg_annotator.total_mask = imread(output_path, IMREAD_GRAYSCALE);
+            Mat img_color;
+            applyColorMap(seg_annotator.total_mask, img_color, COLORMAP_JET);
+            img_color.copyTo(seg_annotator.temp_img, seg_annotator.total_mask>0);
+            //seg_annotator.temp_img.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
+            //image.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
         }else{
             seg_annotator.total_mask = Mat(image.size(), CV_8UC1, Scalar(0));
         }
@@ -50,7 +53,7 @@ int main(int argc, char** argv ){
         namedWindow("Display Image", WINDOW_AUTOSIZE );
         setMouseCallback("Display Image", seg_annotator.seg_callback, &seg_annotator);
 
-        imshow("Display Image", image);
+        imshow("Display Image", seg_annotator.temp_img);
         int key = waitKey(0);
         if (char(key) == 'q'){
             break;
@@ -61,8 +64,16 @@ int main(int argc, char** argv ){
         else if (char(key) == 'd'){
             seg_annotator.cur_idx = (seg_annotator.cur_idx+1)%image_paths.size();
         }
+        else if (char(key) == 'w'){
+            seg_annotator.color_idx = (seg_annotator.color_idx+17)%255;
+            cout << seg_annotator.color_idx << endl;
+        }
+        else if (char(key) == 's'){
+            seg_annotator.color_idx = (seg_annotator.color_idx-17+255)%255;
+            cout << seg_annotator.color_idx << endl;
+        }
         
-        imwrite(output_path, seg_annotator.total_mask*100);
+        imwrite(output_path, seg_annotator.total_mask);
     }
     return 0;
 }
