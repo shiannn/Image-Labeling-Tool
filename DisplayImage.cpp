@@ -66,6 +66,18 @@ int add_masks(string image_folder_path, string output_mask_path){
             seg_annotator.color_idx = (seg_annotator.color_idx-17+255)%255;
             cout << seg_annotator.color_idx << endl;
         }
+        else if (char(key) == '1'){
+            if (seg_annotator.brush_size > 1){
+                seg_annotator.brush_size -= 1;
+            }
+            cout << seg_annotator.brush_size << endl;
+        }
+        else if (char(key) == '2'){
+            if (seg_annotator.brush_size < 15){
+                seg_annotator.brush_size += 1;
+            }
+            cout << seg_annotator.brush_size << endl;
+        }
         
         imwrite(output_path, seg_annotator.total_mask);
     }
@@ -107,6 +119,10 @@ int add_bboxes(string image_folder_path){
 }
 
 int main(int argc, char** argv ){
+    if (argc != 2){
+        cout << "usage: ./DisplayImage <Path of Image Folder>" << endl;
+        return -1;
+    }
     int usage;
     cout << "1: Add Bounding Boxes 2: Add Segmentation Masks" << endl;
     cin >> usage;
@@ -114,10 +130,8 @@ int main(int argc, char** argv ){
         cout << "Please enter 1 or 2" << endl;
         return -1;
     }
-    string image_folder_path;
+    string image_folder_path(argv[1]);
     string output_mask_path;
-    cout << "Please Enter the Path of Image Folder:" << endl;
-    cin >> image_folder_path;
     if (!fs::exists(image_folder_path)){
         cout << "Image Folder not exists" << endl;
         return -1;

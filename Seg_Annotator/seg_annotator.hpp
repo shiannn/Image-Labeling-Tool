@@ -13,6 +13,7 @@ class SegAnnotator{
         vector<String> img_paths;
         int cur_idx;
         int color_idx;
+        int brush_size;
         bool drawing;
         SegAnnotator(vector<String> img_paths);
         static void seg_callback(int  event, int  x, int  y, int  flag, void *param);

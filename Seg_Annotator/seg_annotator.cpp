@@ -9,8 +9,9 @@ SegAnnotator::SegAnnotator(vector<String> img_paths):img_paths(img_paths){
     int n_imgs = img_paths.size();
     deltas.resize(n_imgs);
     cur_idx = 0;
-    color_idx = 1;
+    color_idx = 120;
     drawing = false;
+    brush_size = 5;
 }
 void SegAnnotator::seg_callback(int  event, int  x, int  y, int  flag, void *param){
     SegAnnotator* segA_ptr = (SegAnnotator*)param;
@@ -20,8 +21,7 @@ void SegAnnotator::seg_callback(int  event, int  x, int  y, int  flag, void *par
         segA_ptr->drawing = true;
         Point center = Point(x,y);
         cout << "use color" << segA_ptr->color_idx << endl;
-        circle(segA_ptr->temp_mask,center,5,(segA_ptr->color_idx),5);
-        //segA_ptr->temp_img.setTo(Scalar(255,0,0), segA_ptr->temp_mask>0);
+        circle(segA_ptr->temp_mask,center,segA_ptr->brush_size,(segA_ptr->color_idx),segA_ptr->brush_size);
         Mat img_color;
         applyColorMap(segA_ptr->temp_mask, img_color, COLORMAP_JET);
         img_color.copyTo(segA_ptr->temp_img, segA_ptr->total_mask==0 & segA_ptr->temp_mask>0);
@@ -30,8 +30,7 @@ void SegAnnotator::seg_callback(int  event, int  x, int  y, int  flag, void *par
     else if(event == EVENT_MOUSEMOVE){
         if (segA_ptr->drawing){
             Point center = Point(x,y);
-            circle(segA_ptr->temp_mask,center,5,(segA_ptr->color_idx),5);
-            //segA_ptr->temp_img.setTo(Scalar(255,0,0), segA_ptr->temp_mask>0);
+            circle(segA_ptr->temp_mask,center,segA_ptr->brush_size,(segA_ptr->color_idx),segA_ptr->brush_size);
             Mat img_color;
             applyColorMap(segA_ptr->temp_mask, img_color, COLORMAP_JET);
             img_color.copyTo(segA_ptr->temp_img, segA_ptr->total_mask==0 & segA_ptr->temp_mask>0);
