@@ -54,7 +54,7 @@ void SegAnnotator::seg_callback(int  event, int  x, int  y, int  flag, void *par
             SparseMat top_sparse = segA_ptr->deltas[cur_idx].back();
             Mat top_draw;
             top_sparse.convertTo(top_draw, -1);
-            segA_ptr->total_mask -= top_draw;
+            segA_ptr->total_mask.setTo(0, top_draw > 0);
             segA_ptr->deltas[cur_idx].pop_back();
             segA_ptr->cur_img.copyTo(segA_ptr->temp_img, segA_ptr->total_mask==0);
             imshow("Display Image", segA_ptr->temp_img);
