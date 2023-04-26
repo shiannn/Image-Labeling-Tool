@@ -11,16 +11,11 @@ using namespace cv;
 using namespace std;
 namespace fs = filesystem;
 
-int main(int argc, char** argv ){
-    if ( argc != 3 )
-    {
-        printf("usage: DisplayImage.out <Image_Folder> <Masks_Output_Folder>\n");
-        return -1;
-    }
-    fs::path mask_output_dir = fs::path(argv[2]);
+int add_masks(string image_folder_path, string output_mask_path){
+    fs::path mask_output_dir = fs::path(output_mask_path);
     fs::create_directory(mask_output_dir);
     vector<String> image_paths;
-    glob(argv[1], image_paths, false);
+    glob(image_folder_path, image_paths, false);
     SegAnnotator seg_annotator(image_paths);
     while(true){
         int i = seg_annotator.cur_idx;
@@ -77,16 +72,9 @@ int main(int argc, char** argv ){
     }
     return 0;
 }
-int main1(int argc, char** argv )
-{   
-    cout << "OpenCV version : " << CV_VERSION << endl;
-    if ( argc != 2 )
-    {
-        printf("usage: DisplayImage.out <Image_Path>\n");
-        return -1;
-    }
+int add_bboxes(string image_folder_path){   
     vector<String> image_paths;
-    glob(argv[1], image_paths, false);
+    glob(image_folder_path, image_paths, false);
     MouseCapture mcap(image_paths);
     while(true){
         int i = mcap.cur_idx;
@@ -117,4 +105,33 @@ int main1(int argc, char** argv )
         }
     }
     return 0;
+}
+
+int main(int argc, char** argv ){
+    int usage;
+    cout << "1: Add Bounding Boxes 2: Add Segmentation Masks" << endl;
+    cin >> usage;
+    if (usage != 1 && usage != 2){
+        cout << "Please enter 1 or 2" << endl;
+        return -1;
+    }
+    string image_folder_path;
+    string output_mask_path;
+    cout << "Please Enter the Path of Image Folder:" << endl;
+    cin >> image_folder_path;
+    if (!fs::exists(image_folder_path)){
+        cout << "Image Folder not exists" << endl;
+        return -1;
+    }
+    else if (usage == 1){
+        add_bboxes(image_folder_path);
+    } else if (usage == 2){
+        cout << "Please Enter the Path of Masks Output Folder:" << endl;
+        cin >> output_mask_path;
+        if (!fs::exists(image_folder_path)){
+            cout << "Masks Output Folder not exists" << endl;
+            fs::create_directories(image_folder_path);
+        }
+        add_masks(image_folder_path, output_mask_path);
+    }
 }
