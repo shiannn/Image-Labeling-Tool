@@ -18,7 +18,6 @@ void MouseCapture::mouse_callback(int  event, int  x, int  y, int  flag, void *p
     int cur_idx = mcap_ptr->cur_idx;
     mcap_ptr->cur_imgs[cur_idx].copyTo(temp_img);
     if (event == EVENT_LBUTTONUP) {
-        //cout << "(" << x << ", " << y << ")" << endl;
         pair<int,int> temp(x,y);
         mcap_ptr->pvecs[cur_idx].push_back(temp);
         mcap_ptr->draw_points(temp_img);
@@ -36,11 +35,9 @@ void MouseCapture::mouse_callback(int  event, int  x, int  y, int  flag, void *p
 void MouseCapture::draw_points(Mat img){
     vector<pair<int,int> > pvec = pvecs[cur_idx];
     for (int i=0; i<pvec.size() ; i++){
-        //cout << mcap_ptr->pvec.back().first << " " << mcap_ptr->pvec.back().second << endl;
         int x = pvec[i].first;
         int y = pvec[i].second;
         Point center = Point(x,y);
-        //circle(mcap_ptr->cur_img, center, 1, CV_RGB(255,0,0),3);
         circle(img, center, 1, CV_RGB(255,0,0),3);
         if (i % 2 == 1) {
             // draw bbox

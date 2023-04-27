@@ -20,7 +20,6 @@ int add_masks(string image_folder_path, string output_mask_path){
     while(true){
         int i = seg_annotator.cur_idx;
         Mat image;
-        //image = imread( argv[1], 1 );
         image = imread( image_paths[i], 1 );
         if ( !image.data )
         {
@@ -37,8 +36,6 @@ int add_masks(string image_folder_path, string output_mask_path){
             Mat img_color;
             applyColorMap(seg_annotator.total_mask, img_color, COLORMAP_JET);
             img_color.copyTo(seg_annotator.temp_img, seg_annotator.total_mask>0);
-            //seg_annotator.temp_img.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
-            //image.setTo(Scalar(255,0,0), seg_annotator.total_mask>0);
         }else{
             seg_annotator.total_mask = Mat(image.size(), CV_8UC1, Scalar(0));
         }
@@ -90,7 +87,6 @@ int add_bboxes(string image_folder_path){
     while(true){
         int i = mcap.cur_idx;
         Mat image;
-        //image = imread( argv[1], 1 );
         image = imread( image_paths[i], 1 );
         if ( !image.data )
         {
