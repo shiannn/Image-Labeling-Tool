@@ -29,7 +29,7 @@
 - **Left button on Mouse** for adding a point of bounding-box
 - **Right button on Mouse** for undoing
 
-    <img src=demo/bbox_fast.gif width=300>
+    <img src=demo/bbox_fast.gif>
 
     You will get a **label.csv** containing the coordinates. The $i$'th bounding box is composed of two points $(x_i^1, y_i^1)$, $(x_i^2, y_i^2)$.
     
@@ -49,7 +49,7 @@
 - **Left button on Mouse** for labeling a segmentation mask. Drag the mouse for larger area.
 - **Right button on Mouse** for undoing
 
-    <img src=demo/switch_images.gif width=300>
+    <img src=demo/switch_images.gif>
 
     You will get segmentation mask results like the following.
     <img src=demo/arrow_mask.png width=300>
