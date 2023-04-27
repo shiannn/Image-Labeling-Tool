@@ -50,7 +50,6 @@ void MouseCapture::draw_points(Mat img){
 void MouseCapture::write2csv(){
     ofstream output_csv;
     output_csv.open("label.csv");
-    output_csv << "header";
     for (int i=0;i<img_paths.size();i++){
         output_csv << img_paths[i];
         int total_pts = pvecs[i].size();

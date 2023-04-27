@@ -47,6 +47,7 @@ int add_masks(string image_folder_path, string output_mask_path){
         imshow("Display Image", seg_annotator.temp_img);
         int key = waitKey(0);
         if (char(key) == 'q'){
+            imwrite(output_path, seg_annotator.total_mask);
             break;
         }
         else if (char(key) == 'a'){
